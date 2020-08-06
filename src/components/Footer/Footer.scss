@@ -1,0 +1,109 @@
+.footer {
+  background-color: #373737;
+  padding: 50px 0;
+  width: 100%;
+  flex-wrap: wrap;
+
+  &-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    @media screen and (max-width: 830px) {
+      max-width: 600px;
+      flex-wrap: wrap;
+    }
+    @media screen and (max-width: 600px) {
+      max-width: 500px;
+      flex-wrap: wrap;
+    }
+  }
+  &-category {
+    @media screen and (max-width: 400px) {
+      display: none;
+    }
+    & p {
+      font-size: 18px;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    ul {
+      display: flex;
+      flex-direction: column;
+      li {
+        list-style: none;
+        margin-bottom: 10px;
+        color: #fff;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .newsletter {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    @media screen and (max-width: 500px) {
+      display: flex;
+      //   align-items: center;
+      margin: 0 auto;
+    }
+    &-title {
+      color: #fff;
+      font-size: 18px;
+      line-height: 18px;
+      font-family: "Raleway", sans-serif;
+    }
+    & p {
+      font-family: "Roboto", sans-serif;
+      font-size: 12px;
+      max-width: 200px;
+      color: #f8f8f8;
+      margin-bottom: 10px;
+    }
+    & form {
+      display: flex;
+      margin-bottom: 30px;
+      & input {
+        text-transform: uppercase;
+        color: #333333;
+        background-color: #fff51f;
+        padding: 5px;
+        border: none;
+      }
+      & button {
+        color: #fff;
+        background-color: #000;
+        border: none;
+        padding: 0 10px;
+      }
+    }
+    &-payments {
+      display: flex;
+      width: 100%;
+      justify-content: space-evenly;
+    }
+  }
+
+  &-about {
+    @media screen and (max-width: 500px) {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      //   align-items: center;
+      margin: 10px auto;
+    }
+    &__title {
+      font-size: 18px;
+      color: #fff;
+    }
+    & p {
+      max-width: 250px;
+      color: #fff;
+      font-size: 12px;
+      line-height: 12px;
+    }
+  }
+}

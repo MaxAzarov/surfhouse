@@ -1,0 +1,32 @@
+.main-preview {
+  display: flex;
+  flex-wrap: wrap;
+  &__instagram {
+    box-sizing: border-box;
+    background-color: #eaeaea;
+    display: flex;
+    flex-direction: column;
+    & .instagram-title {
+      margin: 0 auto;
+      margin-top: 40px;
+      font-size: 22px;
+      margin-bottom: 20px;
+      padding-left: 40px;
+      background: url("./../../images/instagram/instaicon.png") left no-repeat;
+    }
+  }
+  &__moments {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    @media screen and (max-width: 1130px) {
+      // display: none;
+      font-size: 14px;
+      max-width: 700px;
+      display: flex;
+      //   justify-content: center;
+      justify-content: space-evenly;
+    }
+  }
+}

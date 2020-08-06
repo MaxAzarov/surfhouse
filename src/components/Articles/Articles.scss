@@ -1,0 +1,22 @@
+.articles {
+  margin-top: 30px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  max-height: 270px;
+  padding-bottom: 10px;
+  margin-bottom: 50px;
+  &__title {
+    font-family: "Roboto", sans-serif !important;
+    font-size: 24px;
+    font-weight: 900;
+    font-style: italic;
+    padding-bottom: 0;
+  }
+  & p {
+    font-family: "Roboto", sans-serif;
+    max-width: 185px;
+    flex: 1 1 auto;
+    padding-left: 20px;
+  }
+}

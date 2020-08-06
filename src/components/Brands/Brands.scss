@@ -1,0 +1,20 @@
+.main-preview__brands {
+  box-sizing: border-box;
+  background-color: #f8f8f8;
+  display: flex;
+  width: 100%;
+  //   flex-wrap: wrap;
+  @media screen and (max-width: 1300px) {
+    display: none;
+  }
+
+  max-height: 200px;
+  justify-content: space-between;
+  & img {
+    max-width: 300px;
+  }
+  &-container {
+    width: 100%;
+    margin: 0 auto;
+  }
+}
