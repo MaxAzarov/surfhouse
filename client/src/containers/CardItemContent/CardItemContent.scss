@@ -1,0 +1,204 @@
+.cart-item {
+  &__wrapper {
+    display: flex;
+    @media screen and (max-width: 650px) {
+      display: flex;
+      flex-direction: column;
+    }
+    .cart-item__images {
+      @media screen and (max-width: 650px) {
+        display: flex;
+        justify-content: center;
+      }
+    }
+  }
+  &__info {
+    > p:first-child {
+      font-family: "Roboto", sans-serif;
+      font-size: 24px;
+      font-weight: 900;
+      @media screen and (max-width: 650px) {
+        display: flex;
+        justify-content: center;
+      }
+    }
+    .size-title,
+    .length-title {
+      text-transform: uppercase;
+      font-family: "Roboto", sans-serif;
+      font-size: 12px;
+      margin-top: 15px;
+    }
+  }
+  &__price {
+    @media screen and (max-width: 650px) {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    display: flex;
+    justify-content: space-between;
+    color: #666669;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.1);
+    > p {
+      font-family: "Roboto", sans-serif;
+      font-size: 22px;
+    }
+    span {
+      color: #000;
+    }
+  }
+  &__overview {
+    font-size: 12px;
+    color: #707070;
+    margin-top: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.1);
+    span {
+      font-size: 12px;
+      font-family: "Roboto", sans-serif;
+    }
+  }
+  &__sizes {
+    display: flex;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.1);
+    & .active {
+      display: block;
+      background-color: rgba(25, 212, 8, 0.644);
+      padding: 10px;
+      margin-right: 5px;
+      margin-bottom: 15px;
+    }
+  }
+  &__size {
+    display: block;
+    background-color: #fff;
+    padding: 10px;
+    margin-right: 5px;
+    margin-bottom: 15px;
+  }
+  &__lengths {
+    display: flex;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.1);
+  }
+  &__length {
+    display: block;
+    background-color: #fff;
+    padding: 10px;
+    margin-right: 5px;
+    margin-bottom: 15px;
+  }
+  &__footer {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+  }
+  &__warn {
+    position: absolute;
+    top: -12px;
+    white-space: nowrap;
+    color: red;
+    left: 50%;
+    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+  }
+  &__quantity {
+    input {
+      display: flex;
+      margin-left: 5px;
+      background-color: #fff;
+      padding: 10px 0;
+      max-width: 30px;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+      border: none;
+    }
+    .quantity-wrapper {
+      display: flex;
+    }
+    span {
+      color: grey;
+      border: none;
+      display: flex;
+      align-self: center;
+      margin-left: 5px;
+    }
+  }
+  &__add {
+    position: relative;
+    color: #fff;
+    background-color: #fb4d01;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    text-transform: uppercase;
+    padding: 10px 30px;
+    align-self: center;
+    max-height: 50px;
+    font-size: 16px;
+    // div {
+    //   position: absolute;
+    //   top: -100%;
+    // }
+  }
+  &__action {
+    ul {
+      li {
+        list-style: none;
+        font-size: 11px;
+        font-family: "Roboto", sans-serif;
+        margin-bottom: 10px;
+        font-weight: 400;
+        &::before {
+          content: "+";
+        }
+      }
+    }
+  }
+
+  &__tabs {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px;
+    margin-top: 30px;
+    .tabs-title {
+      ul {
+        display: flex;
+        align-items: center;
+        li {
+          list-style: none;
+          text-transform: uppercase;
+          margin-right: 15px;
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+        .active {
+          background-color: #26d2fc;
+          padding: 10px;
+        }
+      }
+    }
+    .tab-info {
+      font-size: 12px;
+      margin-top: 10px;
+      padding: 10px;
+      color: #808080;
+      border: 1px solid grey;
+      line-height: 15px;
+      font-family: "Roboto", sans-serif;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+  }
+}
