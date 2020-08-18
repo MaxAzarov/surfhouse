@@ -6,5 +6,6 @@ export interface IUser extends Document {
   company: string;
   password: string;
   basket: Array<IBasketCard>;
+  wishlist: Array<IBasketCard>;
   _id: string;
 }

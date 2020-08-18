@@ -3,7 +3,6 @@ import "./PurchaseProcess.scss";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
 const PurchaseProcess = (props: RouteComponentProps) => {
-  console.log(props.match);
   return (
     <div className="purchase-process">
       <ul>

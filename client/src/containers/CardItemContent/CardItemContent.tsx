@@ -31,9 +31,7 @@ const CardItemContent = (props: RouteComponentProps<Props>) => {
   const fetchCard = useCallback(async () => {
     const response = await fetch(`/api/cards/${props.match.params.id}`);
     const data = await response.json();
-    // setTimeout(() => {
     setCard(data);
-    // }, 2000);
     setTabs([
       { tab: "Products Description", info: data.productDescription },
       { tab: "Additional information", info: data.additionalInfo },
@@ -65,6 +63,24 @@ const CardItemContent = (props: RouteComponentProps<Props>) => {
     });
 
     await dispatch(FetchBasketCards(token));
+  };
+
+  const AddWishList = async () => {
+    if (!token || !isAuth) {
+      setAuthWarn("You need authorization to add goods into basket! ");
+      setTimeout(() => {
+        setAuthWarn("");
+      }, 2000);
+    }
+
+    await fetch("/api/wishlist", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify({ id: props.match.params.id, quantity, size }),
+    });
   };
 
   return (
@@ -142,7 +158,13 @@ const CardItemContent = (props: RouteComponentProps<Props>) => {
                 </button>
                 <div className="cart-item__action">
                   <ul>
-                    <li>Add to Wishlist</li>
+                    <li
+                      onClick={() => {
+                        AddWishList();
+                      }}
+                    >
+                      Add to Wishlist
+                    </li>
                     <li>Email to a friend</li>
                   </ul>
                 </div>

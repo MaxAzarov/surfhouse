@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-// import validator from "validator";
 import { ICard } from "./../interfaces/card";
 
 const cardSchema: Schema = new Schema({

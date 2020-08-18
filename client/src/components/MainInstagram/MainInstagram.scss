@@ -21,11 +21,9 @@
     margin-bottom: 40px;
     flex-wrap: wrap;
     @media screen and (max-width: 1130px) {
-      // display: none;
       font-size: 14px;
       max-width: 700px;
       display: flex;
-      //   justify-content: center;
       justify-content: space-evenly;
     }
   }

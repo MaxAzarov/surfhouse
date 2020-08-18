@@ -10,10 +10,18 @@ import {
   ISetCardView,
   CLEAR_BASKET,
   View,
+  SET_SEARCH,
+  ISetSearch,
+  SET_AMOUNT_SORT,
+  SET_SKIP_SORT,
+  SET_PRICE_SORT,
+  ISetAmount,
+  ISetSkip,
+  ISetPrice,
 } from "./../types/actions/basket";
 import { Dispatch } from "redux";
 import useFetch from "../utils/useFetch";
-import { UseLogin } from "./user";
+import { UserLogin } from "./user";
 import { Actions } from "./../types/actions/rootActions";
 
 export const ChangeCardAmount = (
@@ -34,21 +42,18 @@ export const FetchBasketCards = (token: string) => async (
     })
       .then((response) => response.json())
       .then((items) => {
-        console.log(items);
-
         dispatch({ type: FETCH_CARDS_BASKET, payload: items.cards.basket });
       })
       .catch((e) => {
-        console.log(e);
         localStorage.removeItem("token");
         localStorage.removeItem("id");
-        dispatch(UseLogin("", ""));
+        dispatch(UserLogin("", ""));
         alert("Need to authenticate");
       });
   }
 };
 
-export const removeCard = (id: string, token: string) => async (
+export const removeBasketCard = (id: string, token: string) => async (
   dispatch: Dispatch<BasketActionTypes>
 ) => {
   if (!id || !token) {
@@ -77,3 +82,24 @@ export const clearBasket = (token: string) => async (
   await fetch("/api/basket/clear", { headers: { Authorization: token } });
   dispatch({ type: CLEAR_BASKET });
 };
+
+export const setSearch = (search: string): ISetSearch => ({
+  type: SET_SEARCH,
+  payload: search,
+});
+
+export const setAmount = (amount: number): ISetAmount => ({
+  type: SET_AMOUNT_SORT,
+  payload: amount,
+});
+
+export const setSkip = (skip: number): ISetSkip => ({
+  type: SET_SKIP_SORT,
+  payload: skip,
+});
+
+type PriceValues = -1 | 1;
+export const setPrice = (price: PriceValues): ISetPrice => ({
+  type: SET_PRICE_SORT,
+  payload: price,
+});

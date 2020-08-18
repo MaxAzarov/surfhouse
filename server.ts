@@ -6,6 +6,7 @@ import express, {
   Errback,
 } from "express";
 import mongoose from "mongoose";
+import nodemailer from "nodemailer";
 
 import cards from "./controllers/cards";
 import user from "./controllers/user";
@@ -28,6 +29,39 @@ app.use((req, res, next) => {
 
 app.use((err: Errback, req: Request, res: Response, next: NextFunction) => {
   res.send(err);
+});
+app.post("/api/email", async (req, res) => {
+  const { email } = req.body;
+  try {
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: emailSendler,
+        pass: password,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    let mailOption = {
+      from: emailSendler,
+      to: `${email}`,
+      subject: "You subscribe!",
+      text: "You subscribe!",
+    };
+
+    await transporter.sendMail(mailOption, (err, data) => {
+      if (err) {
+        console.log("Errors", err);
+      } else {
+        console.log("Email was sended!");
+      }
+    });
+    res.status(200).send({ status: "ok" });
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 mongoose

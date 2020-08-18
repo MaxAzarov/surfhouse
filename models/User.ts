@@ -40,6 +40,28 @@ const UserSchema = new Schema({
       },
     },
   ],
+  wishlist: [
+    {
+      id: {
+        type: Schema.Types.ObjectId,
+        ref: "Cards",
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        default: 1,
+        validate: {
+          validator: function (el: number): boolean {
+            return el > 0;
+          },
+          message: "Quantity can't be less then 1! ",
+        },
+      },
+      size: {
+        type: String,
+      },
+    },
+  ],
 });
 
 const User = mongoose.model<IUser>("User", UserSchema);

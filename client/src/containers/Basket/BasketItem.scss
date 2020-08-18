@@ -6,10 +6,6 @@
     width: 100%;
     flex-wrap: wrap;
     @media screen and (max-width: 1200px) {
-      // display: flex;
-      // flex-direction: column;
-      //   flex-direction: column;
-      //   align-items: center;
       justify-content: center;
     }
     .cart-products__leftbar {
@@ -18,7 +14,6 @@
       flex-direction: column;
       max-width: 600px;
       flex: 0 1 600px;
-      //   margin-right: 10px;
       flex-wrap: wrap;
       .leftbar-products {
         display: flex;
@@ -69,7 +64,6 @@
                 max-width: 250px;
                 text-transform: uppercase;
                 @media screen and (max-width: 400px) {
-                  // display: none;
                   font-size: 14px;
                 }
               }
@@ -139,7 +133,6 @@
             &__subtotal {
               color: #666669;
               @media screen and (max-width: 400px) {
-                //display: none;
                 position: absolute;
                 bottom: 20px;
                 left: 50%;

@@ -1,5 +1,6 @@
 import user from "./user";
 import basket from "./basket";
+import wishlist from "./wishlist";
 
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import thunk, { ThunkMiddleware } from "redux-thunk";
@@ -16,6 +17,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const reducers = combineReducers({
   basket,
   user,
+  wishlist,
 });
 
 export type AppState = ReturnType<typeof reducers>;

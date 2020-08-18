@@ -1,7 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Footer.scss";
 
 export default function Footer() {
+  const [email, setEmail] = useState<string>("");
+  const sendEmail = () => {
+    fetch("/api/email", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+  };
   return (
     <footer className="footer">
       <div className="footer-container">
@@ -44,8 +54,20 @@ export default function Footer() {
         <div className="newsletter">
           <div className="newsletter-title">Newsletter</div>
           <p>Join thousands of ohter people subscibe to our news</p>
-          <form action="">
-            <input type="email" value="" placeholder="insert email" />
+          <form
+            action=""
+            onSubmit={() => {
+              sendEmail();
+            }}
+          >
+            <input
+              type="email"
+              value={email}
+              placeholder="insert email"
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+            />
             <button type="submit">Submit</button>
           </form>
           <div className="newsletter-payments">

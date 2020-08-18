@@ -3,6 +3,12 @@
   flex-direction: column;
   flex: 0 0 270px;
   margin-bottom: 30px;
+  @media screen and (max-width: 900px) {
+    position: absolute;
+    display: none;
+    top: 50px;
+    right: 0;
+  }
   &__title {
     padding-left: 40px;
     display: flex;
@@ -38,5 +44,8 @@
         -o-transition: all 0.2s ease 0.2s;
       }
     }
+  }
+  &-active {
+    display: block !important;
   }
 }

@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
+
 import "./HomeCards.scss";
 import Cards from "./../../components/Cards/Cards";
 import { ICardItem } from "../../../../interfaces/card";
@@ -24,7 +25,6 @@ const HomeCards: React.FC<Props> = () => {
   const getTop = useCallback(async () => {
     let response = await fetch("api/cards/top");
     const data = await response.json();
-    console.log(data.cards);
     setTopProducts(data.cards);
   }, []);
 

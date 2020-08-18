@@ -15,6 +15,7 @@ import WishList from "./pages/WishList/WishList";
 import { isAuth } from "./actions/user";
 import { AppState } from "./reducers/rootReducer";
 import { FetchBasketCards } from "./actions/basket";
+import { FetchWishlistCards } from "./actions/wishlist";
 
 const App: React.FC = () => {
   const token = useSelector<AppState, string>((state) => state.user.token);
@@ -22,6 +23,7 @@ const App: React.FC = () => {
   dispatch(isAuth());
   if (token) {
     dispatch(FetchBasketCards(token));
+    dispatch(FetchWishlistCards(token));
   }
 
   return (

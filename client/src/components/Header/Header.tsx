@@ -10,12 +10,15 @@ import youtube from "./../../images/header/youtube.png";
 import pinterest from "./../../images/header/pinterest.png";
 import instagram from "./../../images/header/insta.png";
 import HeaderInfo from "./HeaderInfo";
+import { useDispatch } from "react-redux";
+import { OpenMenu } from "../../actions/user";
 
 type Props = {
   id: string;
 };
 const Header = (props: RouteComponentProps<Props>): JSX.Element => {
   const location = useLocation();
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -42,10 +45,6 @@ const Header = (props: RouteComponentProps<Props>): JSX.Element => {
                 <li>
                   <img src={instagram} alt="instagram" />
                 </li>
-                <select name="" id="">
-                  <option value="EN">EN</option>
-                  <option value="UA">UA</option>
-                </select>
               </ul>
             </div>
             {location.pathname === "/" && (
@@ -94,7 +93,7 @@ const Header = (props: RouteComponentProps<Props>): JSX.Element => {
       )}
 
       {location.pathname === "/contact" && (
-        <header className="header-contact">
+        <div className="header-contact">
           <div className="header-contact__container">
             <img src={logo} alt="" />
             <ul>
@@ -113,14 +112,21 @@ const Header = (props: RouteComponentProps<Props>): JSX.Element => {
               <li>
                 <img src={instagram} alt="" />
               </li>
-              <select name="" id="">
-                <option value="EN">EN</option>
-                <option value="UA">UA</option>
-              </select>
             </ul>
           </div>
-        </header>
+        </div>
       )}
+
+      <div
+        className="header-burger"
+        onClick={() => {
+          dispatch(OpenMenu());
+        }}
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </>
   );
 };

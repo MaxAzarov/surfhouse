@@ -8,8 +8,14 @@ export interface IBasketCard {
   id: ICardItem;
 }
 
+type PriceValues = -1 | 1;
+
 export interface IBasket {
   cards: IBasketCard[];
   cardsAmount: number;
   view: View;
+  search: string;
+  amount: number;
+  skip: number;
+  price: PriceValues;
 }

@@ -2,18 +2,21 @@ import {
   UserActionTypes,
   SET_USER_INFO,
   USER_LOGOUT,
+  OPEN_MENU,
 } from "../types/actions/user";
 
 interface initial {
   id: string;
   token: string;
   isAuth: boolean;
+  menu: boolean;
 }
 
 const initialState: initial = {
   id: "",
   token: "",
   isAuth: false,
+  menu: false,
 };
 
 const user = (state = initialState, action: UserActionTypes) => {
@@ -32,6 +35,12 @@ const user = (state = initialState, action: UserActionTypes) => {
         id: "",
         token: "",
         isAuth: false,
+      };
+
+    case OPEN_MENU:
+      return {
+        ...state,
+        menu: !state.menu,
       };
     default:
       return { ...state };

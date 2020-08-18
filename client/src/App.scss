@@ -35,8 +35,11 @@ html {
       flex-direction: column;
       max-width: 270px;
       margin-bottom: 30px;
-      @media screen and (max-width: 900px) {
-        display: none;
+
+      img {
+        @media screen and (max-width: 900px) {
+          display: none;
+        }
       }
     }
     &__main {

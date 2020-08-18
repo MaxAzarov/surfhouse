@@ -17,6 +17,11 @@
     justify-content: center;
     align-items: center;
     margin: auto 0;
+    @media screen and (max-width: 568px) {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+    }
   }
 
   .card-item {

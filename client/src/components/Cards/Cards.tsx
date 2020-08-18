@@ -1,10 +1,9 @@
 import React from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import "./Cards.scss";
-
 import { ICardItem } from "./../../../../interfaces/card";
-import { useSelector } from "react-redux";
 import { AppState } from "../../reducers/rootReducer";
 import { IBasket } from "../../../../interfaces/basket";
 
@@ -15,12 +14,10 @@ interface Props extends RouteComponentProps {
 
 const Cards: React.FC<Props> = ({ cards, category, history }) => {
   const view: IBasket = useSelector<AppState, any>((state) => state.basket);
-  console.log(view.view);
   return (
     <div className={"cards " + (view.view === "Squared" ? "" : "rows")}>
       {view.view === "Squared" &&
         cards.map((card: ICardItem) => {
-          //   console.log(card);
           return (
             <div
               className="card-item"
@@ -29,7 +26,7 @@ const Cards: React.FC<Props> = ({ cards, category, history }) => {
                 history.push(`/${category}/${card._id}`);
               }}
             >
-              <div className="card-item__state _yellow">
+              <div className="card-item__state ">
                 <span>New</span>
               </div>
               <img src={require("./../../images/cards/thruster.png")} alt="" />

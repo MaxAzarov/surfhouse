@@ -7,20 +7,33 @@ import {
   SET_CARDS_VIEW,
   CLEAR_BASKET,
   View,
+  SET_SEARCH,
+  SET_AMOUNT_SORT,
+  SET_SKIP_SORT,
+  SET_PRICE_SORT,
 } from "./../types/actions/basket";
 
 import { IBasketCard } from "../../../interfaces/basket";
+type PriceValues = -1 | 1;
 
 interface initial {
   cards: IBasketCard[];
   cardsAmount: number;
   view: View;
+  search: string;
+  amount: number;
+  skip: number;
+  price: PriceValues;
 }
 
 const initialState: initial = {
   cards: [],
   cardsAmount: 0,
+  search: "",
   view: "Rows",
+  amount: 2,
+  skip: 0,
+  price: -1,
 };
 
 const basket = (state = initialState, action: BasketActionTypes) => {
@@ -71,6 +84,31 @@ const basket = (state = initialState, action: BasketActionTypes) => {
         ...state,
         cardsAmount: action.payload,
       };
+
+    case SET_SEARCH:
+      return {
+        ...state,
+        search: action.payload,
+      };
+
+    case SET_AMOUNT_SORT:
+      return {
+        ...state,
+        amount: action.payload,
+      };
+
+    case SET_SKIP_SORT:
+      return {
+        ...state,
+        skip: action.payload,
+      };
+
+    case SET_PRICE_SORT:
+      return {
+        ...state,
+        price: action.payload,
+      };
+
     default:
       return { ...state };
   }

@@ -4,9 +4,15 @@ export const REMOVE_BASKET_CARD = "REMOVE_BASKET_CARD";
 export const SET_CARDS_COUNT = "SET_CARDS_COUNT";
 export const SET_CARDS_VIEW = "SET_CARDS_VIEW";
 export const CLEAR_BASKET = "CLEAR_BASKET";
-// export const ADD_BASKET_CARD = "ADD_BASKET_CARD";
+export const SET_SEARCH = "SET_SEARCH";
+
+export const SET_AMOUNT_SORT = "SET_AMOUNT_SORT";
+export const SET_SKIP_SORT = "SET_SKIP_SORT";
+export const SET_PRICE_SORT = "SET_PRICE_SORT";
 
 export type View = "Squared" | "Rows";
+
+type PriceValues = -1 | 1;
 
 export interface IChangeCardAmount {
   type: typeof CHANGE_CARD_AMOUNT;
@@ -38,10 +44,25 @@ export interface IClearBasket {
   type: typeof CLEAR_BASKET;
 }
 
-// export interface IAddBasketCard {
-//   type: typeof ADD_BASKET_CARD;
-//   payload: object;
-// }
+export interface ISetSearch {
+  type: typeof SET_SEARCH;
+  payload: string;
+}
+
+export interface ISetAmount {
+  type: typeof SET_AMOUNT_SORT;
+  payload: number;
+}
+
+export interface ISetSkip {
+  type: typeof SET_SKIP_SORT;
+  payload: number;
+}
+
+export interface ISetPrice {
+  type: typeof SET_PRICE_SORT;
+  payload: PriceValues;
+}
 
 export type BasketActionTypes =
   | IChangeCardAmount
@@ -49,5 +70,8 @@ export type BasketActionTypes =
   | IRemoveBasketCard
   | ISetCardsCount
   | ISetCardView
-  | IClearBasket;
-//   | IAddBasketCard;
+  | IClearBasket
+  | ISetSearch
+  | ISetAmount
+  | ISetSkip
+  | ISetPrice;

@@ -10,58 +10,6 @@
     flex-direction: column;
     align-items: center;
   }
-  &__quest {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex: 0 0 33.333%;
-    // margin-right: 20px;
-    .checkout-quest {
-      &__title {
-        font-size: 24px;
-        text-transform: uppercase;
-        font-family: "Roboto", sans-serif;
-        span {
-          font-size: 36px;
-          font-weight: 900;
-        }
-      }
-      &__info {
-        font-size: 12px;
-      }
-      &__register {
-        font-size: 12px;
-        font-family: "Roboto", sans-serif;
-        margin-bottom: 20px;
-      }
-    }
-    label {
-      input {
-        margin: 10px 10px;
-      }
-    }
-    ul {
-      li {
-        font-size: 12px;
-        font-family: "Roboto", sans-serif;
-        margin-left: 20px;
-      }
-    }
-    button {
-      color: #fff;
-      background-color: #000;
-      margin: 10px auto;
-      display: flex;
-      justify-content: center;
-      border: none;
-      p {
-        padding: 10px;
-        color: #fff;
-        font-family: "Roboto";
-        text-transform: uppercase;
-      }
-    }
-  }
   &__member {
     display: flex;
     flex-direction: column;
@@ -90,9 +38,6 @@
         height: 27px;
         margin: 5px 0;
         padding-left: 5px;
-        // &::placeholder {
-        //   padding-left: 10px;
-        // }
       }
       label {
         font-size: 12px;
@@ -134,7 +79,7 @@
   &__form {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     @media screen and (max-width: 700px) {
       display: flex;
       flex-direction: column;
@@ -195,17 +140,6 @@
     width: 100%;
     flex-direction: column;
     flex: 0 1 32%;
-    .rightbar-cards {
-      display: flex;
-      justify-content: center;
-      img {
-        margin-right: 10px;
-        margin-bottom: 10px;
-        &::last-child {
-          margin-right: 0;
-        }
-      }
-    }
     label {
       display: flex;
       flex-direction: column;
@@ -238,8 +172,6 @@
     border: none;
     padding: 10px 40px;
     @media screen and (max-width: 700px) {
-      // display: flex;
-      // flex-direction: column;
       margin: 0 auto;
     }
   }

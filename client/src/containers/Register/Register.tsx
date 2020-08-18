@@ -21,7 +21,6 @@ const Register = ({ history }: RouteComponentProps) => {
       { name, email, company, password },
       ""
     );
-    console.log(response);
     if (response.id) {
       history.push("/checkout");
     }

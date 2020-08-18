@@ -6,18 +6,23 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../../reducers/rootReducer";
 import { IBasket } from "../../../../interfaces/basket";
 import { Logout } from "../../actions/user";
-import { clearBasket } from "../../actions/basket";
+import { clearBasket, setSearch } from "../../actions/basket";
+import { IWishList } from "../../../../interfaces/wishlist";
 
-const HeaderInfo = ({ history }: RouteComponentProps) => {
-  const [search, setSearch] = useState<string>("");
+const HeaderInfo = (props: RouteComponentProps) => {
   const location = useLocation();
   const cards: IBasket = useSelector<AppState, any>((state) => state.basket);
   const token = useSelector<AppState, string>((state) => state.user.token);
+  const wishlist: IWishList = useSelector<AppState, any>(
+    (state) => state.wishlist
+  );
   let cart = 0;
   let vat = 0;
   const dispatch = useDispatch();
   const isAuth = useSelector<AppState, boolean>((state) => state.user.isAuth);
   const [headerInfo, setHeaderInfo] = useState(isAuth ? "Logout" : "Log in");
+
+  const [searchLocal, setSearchLocal] = useState("");
 
   if (cards.cards.length) {
     cards.cards.map((item) => {
@@ -38,13 +43,18 @@ const HeaderInfo = ({ history }: RouteComponentProps) => {
                 dispatch(Logout());
                 setHeaderInfo("Log in");
               } else {
-                history.push("/checkout");
+                props.history.push("/checkout");
               }
             }}
           >
             {headerInfo}
           </li>
-          <li>Wish list(0)</li>
+          <Link
+            to="/wishlist"
+            style={{ color: "#fb4d01", textDecoration: "none" }}
+          >
+            <li>Wish list({wishlist.wishlistCards.length})</li>
+          </Link>
         </ul>
       </div>
 
@@ -98,22 +108,35 @@ const HeaderInfo = ({ history }: RouteComponentProps) => {
         </div>
       </div>
 
-      <form className="header-nav-search">
+      <div className="header-nav-search">
         <div className="header-nav-wrapper">
           <input
             type="text"
             placeholder="search"
-            value={search}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearch(e.target.value)
-            }
+            value={searchLocal}
+            disabled={location.pathname === "/" ? true : false}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setSearchLocal(e.target.value);
+            }}
           />
-          <div className="header-nav-cross" onClick={() => setSearch("")}></div>
+          <div
+            className="header-nav-cross"
+            onClick={() => dispatch(setSearch(""))}
+          ></div>
         </div>
-        <button type="submit">
+        <button
+          type="submit"
+          disabled={location.pathname === "/" ? true : false}
+          onClick={() => {
+            dispatch(setSearch(searchLocal));
+            props.history.push({
+              search: `?limit=${2}&skip=${2}&price=${2}&search=${searchLocal}`,
+            });
+          }}
+        >
           <img src={searchIcon} alt="" />
         </button>
-      </form>
+      </div>
 
       {location.pathname === "/" && (
         <div className="header-welcome">

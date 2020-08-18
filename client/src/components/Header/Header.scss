@@ -17,11 +17,8 @@
     & ul {
       display: flex;
       align-self: center;
-      & select {
-        color: #fff;
-        border: none;
-        outline: none;
-        background-color: transparent;
+      @media screen and (max-width: 900px) {
+        display: none;
       }
     }
     & ul li {
@@ -83,7 +80,6 @@
             cursor: pointer;
           }
           & .header-nav__info {
-            // padding-left: 20px;
             & .header-nav__price {
               color: #fff;
               font-size: 18px;
@@ -165,13 +161,13 @@
             width: 100%;
             text-transform: uppercase;
             font-size: 10px;
+            border-radius: none;
             -webkit-border-radius: none;
             -moz-border-radius: none;
             -ms-border-radius: none;
             -o-border-radius: none;
-            &::placeholder {
-              padding-left: 10px;
-            }
+            outline: none;
+            padding-left: 10px;
           }
           & .header-nav-cross {
             position: absolute;
@@ -321,6 +317,23 @@
     }
     & .active {
       background-color: #fb4d01 !important;
+    }
+  }
+
+  &-burger {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: none;
+    @media screen and (max-width: 900px) {
+      display: block;
+    }
+    span {
+      display: block;
+      background-color: #fff;
+      width: 20px;
+      height: 2px;
+      margin-bottom: 3px;
     }
   }
 }

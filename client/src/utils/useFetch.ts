@@ -6,7 +6,6 @@ export default async function useFetch(
 ) {
   try {
     if (body) {
-      console.log(body);
       body = JSON.stringify(body);
     }
 
@@ -17,12 +16,8 @@ export default async function useFetch(
 
     const response = await fetch(url, { method, body, headers });
     const data = await response.json();
-    // setLoading(false);
-    console.log(data);
     return data;
   } catch (e) {
-    // setLoading(false);
-    // setError(e.message);
     throw e;
   }
 }

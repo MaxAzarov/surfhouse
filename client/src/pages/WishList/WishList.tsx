@@ -4,7 +4,7 @@ import Menu from "../../components/Menu/Menu";
 import Navigation from "../../components/Navigation/Navigation";
 import PurchaseProcess from "../../components/PurchaseProcess/PurchaseProcess";
 import Propositions from "../../components/Propositions/Propositions";
-import BasketItems from "../../containers/Basket/Basket";
+import WishList from "../../containers/Basket/WishList";
 const Cart: React.FC = () => {
   return (
     <section className="container">
@@ -18,7 +18,7 @@ const Cart: React.FC = () => {
             <main>
               <Navigation></Navigation>
               <PurchaseProcess></PurchaseProcess>
-              <BasketItems></BasketItems>
+              <WishList></WishList>
             </main>
             <Propositions></Propositions>
           </div>
