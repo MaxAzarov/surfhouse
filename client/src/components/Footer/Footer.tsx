@@ -1,17 +1,11 @@
 import React, { useState } from "react";
 import "./Footer.scss";
+import { useLazyQuery } from "@apollo/client";
+import { sendEmailQuery } from "../../graphql/Query/SendEmail";
 
 export default function Footer() {
   const [email, setEmail] = useState<string>("");
-  const sendEmail = () => {
-    fetch("/api/email", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    });
-  };
+  const [sendEmail] = useLazyQuery(sendEmailQuery);
   return (
     <footer className="footer">
       <div className="footer-container">

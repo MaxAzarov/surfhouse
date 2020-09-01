@@ -1,37 +1,57 @@
 import React, { useState } from "react";
 import { Link, useLocation, RouteComponentProps } from "react-router-dom";
+import { useQuery, useMutation } from "@apollo/client";
+import { useSelector, useDispatch } from "react-redux";
+
 import searchIcon from "./../../images/header/SearchIcon.png";
 import basket from "./../../images/header/basket.png";
-import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../../reducers/rootReducer";
-import { IBasket } from "../../../../interfaces/basket";
 import { Logout } from "../../actions/user";
-import { clearBasket, setSearch } from "../../actions/basket";
-import { IWishList } from "../../../../interfaces/wishlist";
+import { FetchBasketCards } from "../../graphql/Query/FetchBasketCards";
+import Spinner from "../../components/Spinner/Spinner";
+import { FetchWishListCards } from "../../graphql/Query/FetchWishListCards";
+import { ClearBasket } from "../../graphql/Mutation/ClearBasket";
+import { setSearch } from "../../actions/basket";
+import {
+  IFetchBasketCards,
+  IUpdateBasket,
+} from "../../../../interfaces/basket";
+import { IWishListCards } from "../../../../interfaces/wishlist";
 
 const HeaderInfo = (props: RouteComponentProps) => {
   const location = useLocation();
-  const cards: IBasket = useSelector<AppState, any>((state) => state.basket);
-  const token = useSelector<AppState, string>((state) => state.user.token);
-  const wishlist: IWishList = useSelector<AppState, any>(
-    (state) => state.wishlist
-  );
   let cart = 0;
   let vat = 0;
+
+  const { loading, data } = useQuery<IFetchBasketCards>(FetchBasketCards);
+  const { data: WishListBasket } = useQuery<IWishListCards>(FetchWishListCards);
+
   const dispatch = useDispatch();
   const isAuth = useSelector<AppState, boolean>((state) => state.user.isAuth);
   const [headerInfo, setHeaderInfo] = useState(isAuth ? "Logout" : "Log in");
-
   const [searchLocal, setSearchLocal] = useState("");
+  const [clearBasket] = useMutation(ClearBasket, {
+    update(cache) {
+      cache.writeQuery<IFetchBasketCards, IUpdateBasket>({
+        query: FetchBasketCards,
+        data: {
+          FetchBasketCards: [],
+        },
+      });
+    },
+  });
 
-  if (cards.cards.length) {
-    cards.cards.map((item) => {
+  if (data) {
+    data.FetchBasketCards.map((item) => {
       if (item) {
-        cart += item.quantity * item.id.newPrice;
-        vat += item.quantity * item.id.newPrice * 0.07;
+        cart += item.quantity * item.elementId.newPrice;
+        vat += item.quantity * item.elementId.newPrice * 0.07;
       }
       return false;
     });
+  }
+  if (loading) {
+    return <Spinner></Spinner>;
   }
   return (
     <div className="header-nav">
@@ -53,7 +73,7 @@ const HeaderInfo = (props: RouteComponentProps) => {
             to="/wishlist"
             style={{ color: "#fb4d01", textDecoration: "none" }}
           >
-            <li>Wish list({wishlist.wishlistCards.length})</li>
+            <li>Wish list({WishListBasket?.FetchWishListCards.length})</li>
           </Link>
         </ul>
       </div>
@@ -66,13 +86,15 @@ const HeaderInfo = (props: RouteComponentProps) => {
 
           <div className="header-nav__info">
             <div className="header-nav__price">$ {Math.ceil(cart + vat)}</div>
-            <div className="header-nav__amount">{cards.cards.length} items</div>
+            <div className="header-nav__amount">
+              {data?.FetchBasketCards.length} items
+            </div>
           </div>
           <div className="header-nav__edit">
             <div
               className="header-nav-edit__delete"
               onClick={() => {
-                dispatch(clearBasket(token));
+                clearBasket();
               }}
             ></div>
             <Link to="/cart" style={{ textDecoration: "none", color: "#000" }}>
@@ -121,7 +143,10 @@ const HeaderInfo = (props: RouteComponentProps) => {
           />
           <div
             className="header-nav-cross"
-            onClick={() => dispatch(setSearch(""))}
+            onClick={() => {
+              dispatch(setSearch(""));
+              setSearchLocal("");
+            }}
           ></div>
         </div>
         <button
@@ -130,7 +155,7 @@ const HeaderInfo = (props: RouteComponentProps) => {
           onClick={() => {
             dispatch(setSearch(searchLocal));
             props.history.push({
-              search: `?limit=${2}&skip=${2}&price=${2}&search=${searchLocal}`,
+              search: `?limit=${2}&skip=${0}&price=${-1}&search=${searchLocal}`,
             });
           }}
         >

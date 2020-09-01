@@ -17,6 +17,19 @@ export interface ICard extends Document {
   images?: Array<string>;
 }
 
+export interface ICardFetched {
+  size: string;
+  quantity: number;
+  id: string;
+  elementId: {
+    title: string;
+    newPrice: number;
+    image: string;
+    id: string;
+    overview: string;
+  };
+}
+
 export interface ICardItem extends Document {
   title: string;
   newPrice: number;

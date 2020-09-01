@@ -1,21 +1,22 @@
 import React, { useState } from "react";
-import "./Menu.scss";
-import { withRouter } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import classnames from "classnames";
 import { useSelector } from "react-redux";
+
+import "./Menu.scss";
 import { AppState } from "../../reducers/rootReducer";
 
 interface ILink {
   link: string;
   to: string;
 }
+
 const Menu = () => {
   const [links] = useState<ILink[]>([
     { link: "cart", to: "/cart" },
     { link: "register", to: "/register" },
     { link: "apparel", to: "/shop/apparel?limit=2&skip=0&price=1" },
-    { link: "surf apparel", to: "/shop/surfapparel?limit=2&skip=0&price=1" },
+    { link: "surf Apparel", to: "/shop/surfapparel?limit=2&skip=0&price=1" },
     { link: "windsurf", to: "/shop/windsurfing?limit=2&skip=0&price=1" },
     { link: "kitesurf", to: "/shop/kitesurfing?limit=2&skip=0&price=1" },
     { link: "accessories", to: "/shop/accessories?limit=2&skip=0&price=1" },
@@ -27,6 +28,7 @@ const Menu = () => {
     menu: true,
     "menu-active": isOpen,
   });
+
   return (
     <div className={menu}>
       <div className="menu__title">Menu</div>
@@ -47,4 +49,4 @@ const Menu = () => {
     </div>
   );
 };
-export default withRouter(Menu);
+export default Menu;

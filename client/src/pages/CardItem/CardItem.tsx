@@ -6,7 +6,7 @@ import Widgets from "../../components/Widgets/Widgets";
 import Navigation from "../../components/Navigation/Navigation";
 import Social from "../../components/Social/Social";
 import CardItemContent from "../../containers/CardItemContent/CardItemContent";
-import Propositions from "../../components/Propositions/Propositions";
+import Propositions from "../../containers/Propositions/Propositions";
 
 const CardItem: React.FC = () => {
   return (

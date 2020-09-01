@@ -3,7 +3,7 @@ import React from "react";
 import Menu from "../../components/Menu/Menu";
 import Navigation from "../../components/Navigation/Navigation";
 import PurchaseProcess from "../../components/PurchaseProcess/PurchaseProcess";
-import Propositions from "../../components/Propositions/Propositions";
+import Propositions from "../../containers/Propositions/Propositions";
 import WishList from "../../containers/Basket/WishList";
 const Cart: React.FC = () => {
   return (

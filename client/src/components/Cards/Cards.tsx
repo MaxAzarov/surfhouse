@@ -7,23 +7,25 @@ import { ICardItem } from "./../../../../interfaces/card";
 import { AppState } from "../../reducers/rootReducer";
 import { IBasket } from "../../../../interfaces/basket";
 
-interface Props extends RouteComponentProps {
+interface IProps extends RouteComponentProps {
   cards: ICardItem[];
   category?: string;
 }
 
-const Cards: React.FC<Props> = ({ cards, category, history }) => {
-  const view: IBasket = useSelector<AppState, any>((state) => state.basket);
+const Cards: React.FC<IProps> = ({ cards, category, history }) => {
+  const view: IBasket = useSelector<AppState, any>(
+    (state) => state.basket.view
+  );
   return (
     <div className={"cards " + (view.view === "Squared" ? "" : "rows")}>
-      {view.view === "Squared" &&
+      {view.toString() === "Squared" &&
         cards.map((card: ICardItem) => {
           return (
             <div
               className="card-item"
-              key={card._id}
+              key={card.title}
               onClick={() => {
-                history.push(`/${category}/${card._id}`);
+                history.push(`/${category}/${card.id}`);
               }}
             >
               <div className="card-item__state ">
@@ -53,14 +55,14 @@ const Cards: React.FC<Props> = ({ cards, category, history }) => {
           );
         })}
 
-      {view.view === "Rows" &&
+      {view.toString() === "Rows" &&
         cards.map((card: ICardItem) => {
           return (
             <div
               className="card-item _row"
-              key={card._id}
+              key={card.title}
               onClick={() => {
-                history.push(`/${category}/${card._id}`);
+                history.push(`/${category}/${card.id}`);
               }}
             >
               <div className="card-item__state _yellow">

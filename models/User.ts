@@ -20,7 +20,7 @@ const UserSchema = new Schema({
   },
   basket: [
     {
-      id: {
+      elementId: {
         type: Schema.Types.ObjectId,
         ref: "Cards",
       },
@@ -42,7 +42,7 @@ const UserSchema = new Schema({
   ],
   wishlist: [
     {
-      id: {
+      elementId: {
         type: Schema.Types.ObjectId,
         ref: "Cards",
       },

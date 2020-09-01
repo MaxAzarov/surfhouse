@@ -1,65 +1,47 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React from "react";
+import { useQuery } from "@apollo/client";
 
 import "./HomeCards.scss";
 import Cards from "./../../components/Cards/Cards";
-import { ICardItem } from "../../../../interfaces/card";
 import Spinner from "../../components/Spinner/Spinner";
-interface Props {}
-const HomeCards: React.FC<Props> = () => {
-  const [newProducts, setNewProducts] = useState<ICardItem[]>();
-  const [saleProducts, setSaleProducts] = useState<ICardItem[]>();
-  const [topProducts, setTopProducts] = useState<ICardItem[]>();
+import { newCardsQuery } from "../../graphql/Query/NewCards";
+import { saleCardsQuery } from "../../graphql/Query/SaleCards";
+import { topCardsQuery } from "../../graphql/Query/TopCards";
 
-  const getCards = useCallback(async () => {
-    let response = await fetch("api/cards/new");
-    const data = await response.json();
-    setNewProducts(data.cards);
-  }, []);
+const HomeCards: React.FC = () => {
+  const { loading: loadingNew, error: errorNew, data: newCards } = useQuery(
+    newCardsQuery
+  );
+  const { loading: loadingSale, error: errorSale, data: saleCards } = useQuery(
+    saleCardsQuery
+  );
 
-  const getSaleCards = useCallback(async () => {
-    let response = await fetch("api/cards/sale");
-    const data = await response.json();
-    setSaleProducts(data.cards);
-  }, []);
+  const { loading: loadingTop, error: errorTop, data: topCards } = useQuery(
+    topCardsQuery
+  );
 
-  const getTop = useCallback(async () => {
-    let response = await fetch("api/cards/top");
-    const data = await response.json();
-    setTopProducts(data.cards);
-  }, []);
+  if (errorNew || errorSale || errorTop) {
+    return <div>Error!</div>;
+  }
 
-  useEffect(() => {
-    getCards();
-    getSaleCards();
-    getTop();
-  }, [getCards, getSaleCards, getTop]);
   return (
     <>
       <div className="new-products">
         <p>New products</p>
-        {newProducts ? (
-          <Cards cards={newProducts}></Cards>
-        ) : (
-          <Spinner></Spinner>
-        )}
+        {newCards && <Cards cards={newCards.getNewCards}></Cards>}
+        {loadingNew && <Spinner></Spinner>}
       </div>
 
       <div className="top-products">
         <p>Top Products</p>
-        {topProducts ? (
-          <Cards cards={topProducts}></Cards>
-        ) : (
-          <Spinner></Spinner>
-        )}
+        {topCards && <Cards cards={topCards.getTopCards}></Cards>}
+        {loadingTop && <Spinner></Spinner>}
       </div>
 
       <div className="sale-products">
         <p>Sale Products</p>
-        {saleProducts ? (
-          <Cards cards={saleProducts}></Cards>
-        ) : (
-          <Spinner></Spinner>
-        )}
+        {saleCards && <Cards cards={saleCards.getSaleCards}></Cards>}
+        {loadingSale && <Spinner></Spinner>}
       </div>
     </>
   );

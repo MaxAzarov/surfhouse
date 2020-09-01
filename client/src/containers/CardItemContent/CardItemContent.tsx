@@ -1,12 +1,21 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { useQuery, useMutation } from "@apollo/client";
 
 import "./CardItemContent.scss";
 import { ICardItem } from "../../../../interfaces/card";
 import { AppState } from "./../../reducers/rootReducer";
-import { FetchBasketCards } from "../../actions/basket";
 import Spinner from "../../components/Spinner/Spinner";
+import { client } from "./../../index";
+import { GetCard } from "../../graphql/Query/GetCardInfo";
+import { addWishListItemQuery } from "../../graphql/Mutation/AddWishListItem";
+import { FetchBasketCards } from "../../graphql/Query/FetchBasketCards";
+import { addItem } from "../../graphql/Mutation/AddBasketItem";
+import {
+  IFetchBasketCards,
+  IUpdateBasket,
+} from "../../../../interfaces/basket";
 
 type Props = {
   id: string;
@@ -17,185 +26,224 @@ interface ITabs {
   info: string;
 }
 
+interface CardData {
+  GetCardInfo: ICardItem;
+}
+interface IAddCard {
+  AddBasketItem: {
+    size: string;
+    quantity: number;
+    id: string;
+    elementId: {
+      title: string;
+      newPrice: number;
+      image: string;
+      id: string;
+      overview: string;
+    };
+  };
+}
+interface IAddCardVars {
+  id: string;
+  size: string;
+  quantity: number;
+}
+
 const CardItemContent = (props: RouteComponentProps<Props>) => {
   const [tabs, setTabs] = useState<ITabs[]>();
-  const [card, setCard] = useState<ICardItem>();
   const [currentTab, setcurrentTab] = useState<string>();
   const [quantity, setQuantity] = useState<number>(1);
   const token = useSelector<AppState, string>((state) => state.user.token);
-  const isAuth = useSelector<AppState, boolean>((state) => state.user.isAuth);
   const [size, setSize] = useState<string>();
-  const dispatch = useDispatch();
   const [isAuthWarn, setAuthWarn] = useState("");
 
-  const fetchCard = useCallback(async () => {
-    const response = await fetch(`/api/cards/${props.match.params.id}`);
-    const data = await response.json();
-    setCard(data);
-    setTabs([
-      { tab: "Products Description", info: data.productDescription },
-      { tab: "Additional information", info: data.additionalInfo },
-      { tab: "Reviews", info: data.reviews },
-      { tab: "Product tags", info: data.productsTags.join(" ") },
-    ]);
-    setcurrentTab(data.productDescription);
-    setSize(data.size[0]);
-  }, [props.match.params.id]);
+  const id = props.match.params.id;
+  const { loading, error, data } = useQuery<CardData>(GetCard, {
+    variables: { id },
+  });
   useEffect(() => {
-    fetchCard();
-  }, [fetchCard]);
-
-  const AddCardHandler = async () => {
-    if (!token || !isAuth) {
-      setAuthWarn("You need authorization to add goods into basket! ");
-      setTimeout(() => {
-        setAuthWarn("");
-      }, 2000);
+    if (!data) {
+      return;
     }
-
-    await fetch("/api/basket", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: token,
+    setTabs([
+      {
+        tab: "Products Description",
+        info: data.GetCardInfo.productDescription,
       },
-      body: JSON.stringify({ id: props.match.params.id, quantity, size }),
-    });
-
-    await dispatch(FetchBasketCards(token));
-  };
-
-  const AddWishList = async () => {
-    if (!token || !isAuth) {
-      setAuthWarn("You need authorization to add goods into basket! ");
-      setTimeout(() => {
-        setAuthWarn("");
-      }, 2000);
+      {
+        tab: "Additional information",
+        info: data.GetCardInfo.additionalInfo,
+      },
+      { tab: "Reviews", info: data.GetCardInfo.reviews.join(" ") },
+      { tab: "Product tags", info: data.GetCardInfo.productsTags.join(" ") },
+    ]);
+    if (data.GetCardInfo.size[0]) {
+      setSize(data.GetCardInfo.size[0]);
+    } else {
+      setSize("33");
     }
+    setcurrentTab(data.GetCardInfo.productDescription);
+  }, [data]);
 
-    await fetch("/api/wishlist", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: token,
-      },
-      body: JSON.stringify({ id: props.match.params.id, quantity, size }),
-    });
-  };
+  const [addBasketItem] = useMutation<IAddCard, IAddCardVars>(addItem, {
+    variables: {
+      id: props.match.params.id,
+      size: size as string,
+      quantity,
+    },
+    update: (cache, { data: data2 }) => {
+      const basket = cache.readQuery<IFetchBasketCards>({
+        query: FetchBasketCards,
+      });
+      if (data2 && basket) {
+        client.writeQuery<IFetchBasketCards, IUpdateBasket>({
+          query: FetchBasketCards,
+          data: {
+            FetchBasketCards: [...basket.FetchBasketCards, data2.AddBasketItem],
+          },
+        });
+      }
+    },
+  });
+
+  const [addWishListItem] = useMutation(addWishListItemQuery, {
+    variables: {
+      id: props.match.params.id,
+      quantity,
+      size: size || 33,
+    },
+  });
+
+  if (loading || !data) {
+    return <Spinner />;
+  }
+  if (error) {
+    return <div>Can't get this product</div>;
+  }
 
   return (
     <>
-      {card ? (
-        <>
-          <div className="cart-item__wrapper">
-            <div className="cart-item__images">
-              <img src={require("./../../images/cards/thruster.png")} alt="" />
-              <div className="cart-item__views"></div>
+      <div className="cart-item__wrapper">
+        <div className="cart-item__images">
+          <img src={require("./../../images/cards/thruster.png")} alt="" />
+          <div className="cart-item__views"></div>
+        </div>
+
+        <div className="cart-item__info">
+          <p>{data.GetCardInfo.title}</p>
+          <div className="cart-item__price">
+            <p>${data.GetCardInfo.newPrice}</p>
+            <div className="cart-item__statuses">
+              <p>
+                Product code: <span>{data.GetCardInfo.productCode}</span>
+              </p>
+              <p>
+                Availability:
+                <span>
+                  {data.GetCardInfo.availability ? "in stock" : "out of stock"}
+                </span>
+              </p>
+            </div>
+          </div>
+          <div className="cart-item__overview">
+            <span>QUICK OVERVIEW:</span>
+            <p>{data.GetCardInfo.overview}</p>
+          </div>
+
+          <p className="size-title">size</p>
+          <div className="cart-item__sizes">
+            {data.GetCardInfo.size.map((sizeItem, index) => (
+              <div
+                className={
+                  "cart-item__size " + (size === sizeItem ? "active" : "")
+                }
+                key={index}
+                onClick={() => setSize(sizeItem)}
+              >
+                {sizeItem}
+              </div>
+            ))}
+          </div>
+
+          <div className="cart-item__footer">
+            <div className="cart-item__quantity">
+              <p>Quantity:</p>
+              <div className="quantity-wrapper">
+                <span
+                  onClick={() =>
+                    setQuantity((prevstate) =>
+                      prevstate === 1 ? prevstate : prevstate - 1
+                    )
+                  }
+                >
+                  -
+                </span>
+                <input value={quantity} disabled type="text" />
+                <span onClick={() => setQuantity(quantity + 1)}>+</span>
+              </div>
             </div>
 
-            <div className="cart-item__info">
-              <p>{card.title}</p>
-              <div className="cart-item__price">
-                <p>${card.newPrice}</p>
-                <div className="cart-item__statuses">
-                  <p>
-                    Product code: <span>{card.productCode}</span>
-                  </p>
-                  <p>
-                    Availability:
-                    <span>
-                      {card.availability ? "in stock" : "out of stock"}
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div className="cart-item__overview">
-                <span>QUICK OVERVIEW:</span>
-                <p>{card.overview}</p>
-              </div>
-
-              <p className="size-title">size</p>
-              <div className="cart-item__sizes">
-                {card.size.map((sizeItem, index) => (
-                  <div
-                    className={
-                      "cart-item__size " + (size === sizeItem ? "active" : "")
-                    }
-                    key={index}
-                    onClick={() => setSize(sizeItem)}
-                  >
-                    {sizeItem}
-                  </div>
-                ))}
-              </div>
-
-              <div className="cart-item__footer">
-                <div className="cart-item__quantity">
-                  <p>Quantity:</p>
-                  <div className="quantity-wrapper">
-                    <span
-                      onClick={() =>
-                        setQuantity((prevstate) =>
-                          prevstate === 1 ? prevstate : prevstate - 1
-                        )
-                      }
-                    >
-                      -
-                    </span>
-                    <input value={quantity} disabled type="text" />
-                    <span onClick={() => setQuantity(quantity + 1)}>+</span>
-                  </div>
-                </div>
-
-                <p className="cart-item__warn">{isAuthWarn}</p>
-                <button
-                  className="cart-item__add"
+            <p className="cart-item__warn">{isAuthWarn}</p>
+            <button
+              className="cart-item__add"
+              onClick={() => {
+                if (token) {
+                  addBasketItem();
+                } else {
+                  setAuthWarn(
+                    "You need authorization to add goods into basket! "
+                  );
+                  setTimeout(() => {
+                    setAuthWarn("");
+                  }, 2000);
+                }
+              }}
+            >
+              Add to cart
+            </button>
+            <div className="cart-item__action">
+              <ul>
+                <li
                   onClick={() => {
-                    AddCardHandler();
+                    if (token) {
+                      addWishListItem();
+                    } else {
+                      setAuthWarn(
+                        "You need authorization to add goods into basket! "
+                      );
+                      setTimeout(() => {
+                        setAuthWarn("");
+                      }, 2000);
+                    }
                   }}
                 >
-                  Add to cart
-                </button>
-                <div className="cart-item__action">
-                  <ul>
-                    <li
-                      onClick={() => {
-                        AddWishList();
-                      }}
-                    >
-                      Add to Wishlist
-                    </li>
-                    <li>Email to a friend</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="cart-item__tabs">
-            <div className="tabs-title">
-              <ul>
-                {tabs &&
-                  tabs.map((tab, index) => (
-                    <li
-                      key={index}
-                      onClick={() => {
-                        setcurrentTab(tab.info);
-                      }}
-                      className={currentTab === tab.info ? "active" : ""}
-                    >
-                      {tab.tab}
-                    </li>
-                  ))}
+                  Add to Wishlist
+                </li>
+                <li>Email to a friend</li>
               </ul>
             </div>
-            <div className="tab-info">
-              {currentTab ? currentTab : "No info"}
-            </div>
           </div>
-        </>
-      ) : (
-        <Spinner />
-      )}
+        </div>
+      </div>
+      <div className="cart-item__tabs">
+        <div className="tabs-title">
+          <ul>
+            {tabs &&
+              tabs.map((tab, index) => (
+                <li
+                  key={index}
+                  onClick={() => {
+                    setcurrentTab(tab.info);
+                  }}
+                  className={currentTab === tab.info ? "active" : ""}
+                >
+                  {tab.tab}
+                </li>
+              ))}
+          </ul>
+        </div>
+        <div className="tab-info">{currentTab ? currentTab : "No info"}</div>
+      </div>
     </>
   );
 };

@@ -1,4 +1,5 @@
-import { IBasketCard } from "./basket";
-export interface IWishList {
-  wishlistCards: IBasketCard[];
+import { ICardFetched } from "./card";
+
+export interface IWishListCards {
+  FetchWishListCards: ICardFetched[];
 }

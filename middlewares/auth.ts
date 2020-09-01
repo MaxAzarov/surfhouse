@@ -1,16 +1,27 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
 
-const isAuth = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const token = (req as any).header("Authorization").replace("Bearer ", "");
-    const decoded = jwt.verify(token, "mysecret");
-    (req as any).token = token;
-    (req as any).user = decoded;
-    next();
-  } catch (e) {
-    res.status(401).send({ error: "Please authenticate." });
+const jwt = require("jsonwebtoken");
+
+const isAuth = (req: Request, res: Response, next: NextFunction) => {
+  let token = (req as any).header("Authorization");
+  if (!token) {
+    (req as any).isAuth = false;
+    return next();
   }
+  token = token.replace("Bearer ", "");
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, "mysecret");
+  } catch (err) {
+    (req as any).isAuth = false;
+    return next();
+  }
+  if (!decodedToken) {
+    (req as any).isAuth = false;
+    return next();
+  }
+  (req as any).userId = decodedToken.id;
+  (req as any).isAuth = true;
+  next();
 };
-
 export default isAuth;

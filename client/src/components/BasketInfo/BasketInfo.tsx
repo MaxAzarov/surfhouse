@@ -1,20 +1,24 @@
 import React from "react";
 import "./BasketInfo.scss";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { AppState } from "../../reducers/rootReducer";
-import { IBasket } from "../../../../interfaces/basket";
+import { useQuery } from "@apollo/client";
+import { FetchBasketCards } from "../../graphql/Query/FetchBasketCards";
+import Spinner from "../Spinner/Spinner";
+import { IFetchBasketCards } from "../../../../interfaces/basket";
 
 const BasketInfo: React.FC = () => {
-  const basket: IBasket = useSelector<AppState, any>((state) => state.basket);
   let cart = 0;
   let vat = 0;
+  const { loading, data } = useQuery<IFetchBasketCards>(FetchBasketCards);
 
-  if (basket.cards.length) {
-    basket.cards.map((item) => {
+  if (loading) {
+    return <Spinner></Spinner>;
+  }
+  if (data) {
+    data.FetchBasketCards.map((item) => {
       if (item) {
-        cart += item.quantity * item.id.newPrice;
-        vat += item.quantity * item.id.newPrice * 0.07;
+        cart += item.quantity * item.elementId.newPrice;
+        vat += item.quantity * item.elementId.newPrice * 0.07;
       }
       return false;
     });

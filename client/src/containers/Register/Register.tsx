@@ -1,30 +1,19 @@
 import React, { useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import { useMutation } from "@apollo/client";
 
 import "./Register.scss";
-import useFetch from "../../utils/useFetch";
-
-interface IResponse {
-  id: string;
-}
+import { UserRegisterQuery } from "../../graphql/Mutation/UserRegister";
 
 const Register = ({ history }: RouteComponentProps) => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [company, setCompany] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
-  const HandleRegister = async () => {
-    const response: IResponse = await useFetch(
-      "/api/register",
-      "POST",
-      { name, email, company, password },
-      ""
-    );
-    if (response.id) {
-      history.push("/checkout");
-    }
-  };
+  const [Register, { data }] = useMutation(UserRegisterQuery);
+  if (data) {
+    history.push("/checkout");
+  }
   return (
     <div className="contact-form">
       <div className="contact-form__main">
@@ -71,7 +60,15 @@ const Register = ({ history }: RouteComponentProps) => {
           />
         </label>
 
-        <button onClick={HandleRegister}>Register</button>
+        <button
+          onClick={() => {
+            Register({
+              variables: { name, email, company, password },
+            });
+          }}
+        >
+          Register
+        </button>
       </div>
 
       <div className="contact-form__line"></div>

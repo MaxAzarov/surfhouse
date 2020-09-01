@@ -1,28 +1,26 @@
-import React, { useEffect } from "react";
-import "./BasketItem.scss";
+import React from "react";
+import { useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 
+import "./BasketItem.scss";
 import BasketInfo from "../../components/BasketInfo/BasketInfo";
-import { AppState } from "../../reducers/rootReducer";
+import { FetchWishListCards } from "../../graphql/Query/FetchWishListCards";
+import Spinner from "../../components/Spinner/Spinner";
 import BasketItem from "./BasketItem";
-import { IWishList } from "./../../../../interfaces/wishlist";
-import { FetchWishlistCards } from "../../actions/wishlist";
+import { ICardFetched } from "../../../../interfaces/card";
+interface IFetchWishListCards {
+  FetchWishListCards: ICardFetched[];
+}
 
 const BasketItems = () => {
-  const token = useSelector<AppState, string>((state) => state.user.token);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(FetchWishlistCards(token));
-  }, [token, dispatch]);
-  const cards: IWishList = useSelector<AppState, any>(
-    (state) => state.wishlist
-  );
+  const { loading, data } = useQuery<IFetchWishListCards>(FetchWishListCards);
+  if (loading || !data) {
+    return <Spinner></Spinner>;
+  }
   return (
     <div className="cart-main__products">
       <div className="cart-products__leftbar">
-        {cards.wishlistCards.length === 0 ? (
+        {data.FetchWishListCards.length === 0 ? (
           ""
         ) : (
           <div className="leftbar-products__titles">
@@ -35,23 +33,21 @@ const BasketItems = () => {
           </div>
         )}
         <div className="leftbar-products__items">
-          {cards.wishlistCards?.map((item) => {
-            if (item && item.id) {
-              const { quantity, _id } = item;
-              const { image, title, overview, newPrice } = item.id;
-              return (
-                <BasketItem
-                  _id={_id}
-                  title={title}
-                  overview={overview}
-                  newPrice={newPrice}
-                  quantity={quantity}
-                  image={image}
-                ></BasketItem>
-              );
-            }
+          {data.FetchWishListCards.map((item) => {
+            const { quantity, id } = item;
+            const { image, title, overview, newPrice } = item.elementId;
+            return (
+              <BasketItem
+                id={id}
+                title={title}
+                overview={overview}
+                newPrice={newPrice}
+                quantity={quantity}
+                image={image}
+              ></BasketItem>
+            );
           })}
-          {cards.wishlistCards.length === 0 && (
+          {data.FetchWishListCards.length === 0 && (
             <p style={{ fontStyle: "italic" }}>Your basket is empty!</p>
           )}
           <div className="leftbar-products__coupon">

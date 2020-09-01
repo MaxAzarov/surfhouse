@@ -2,7 +2,6 @@
   margin: 0;
   padding: 0;
   font-family: "Raleway", sans-serif;
-  //   width: 100%;
 }
 body,
 html {
@@ -16,7 +15,6 @@ html {
   width: 100%;
   &-wrapper {
     flex: 0 1 1200px;
-    // justify-content: center;
     align-items: center;
     display: flex;
     flex-direction: column;

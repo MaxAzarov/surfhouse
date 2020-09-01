@@ -1,39 +1,82 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+
 import facebook from "./../../images/cardItems/facebook.png";
 import twitter from "./../../images/cardItems/twitter.png";
 import pinterest from "./../../images/cardItems/pinterest.png";
-import { useDispatch, useSelector } from "react-redux";
-import { ChangeCardAmount, removeBasketCard } from "../../actions/basket";
-import { removeWishListCard } from "../../actions/wishlist";
-import { AppState } from "../../reducers/rootReducer";
-import { IBasket } from "./../../../../interfaces/basket";
-import { IWishList } from "./../../../../interfaces/wishlist";
-import { useLocation } from "react-router-dom";
+import { FetchBasketCards } from "../../graphql/Query/FetchBasketCards";
+import { ChangeCardQuantity } from "../../graphql/Mutation/ChangeCardAmount";
+import { removeBasketCard } from "../../graphql/Mutation/RemoveBasketCard";
+import { RemoveWishListItem } from "../../graphql/Mutation/RemoveWishListItem";
+import { FetchWishListCards } from "../../graphql/Query/FetchWishListCards";
+import { ICardFetched } from "../../../../interfaces/card";
+import {
+  IFetchBasketCards,
+  IUpdateBasket,
+} from "../../../../interfaces/basket";
+import { IWishListCards } from "../../../../interfaces/wishlist";
 
 interface IProps {
   quantity: number;
-  _id: string;
+  id: string;
   title: string;
   overview: string;
   newPrice: number;
   image?: string;
 }
 
-const BasketItem = ({ _id, title, overview, newPrice }: IProps) => {
-  const location = useLocation();
-  const dispatch = useDispatch();
-  const cards: IBasket = useSelector<AppState, any>((state) => state.basket);
-  const wishlist: IWishList = useSelector<AppState, any>(
-    (state) => state.wishlist
-  );
-  const token = useSelector<AppState, string>((state) => state.user.token);
-  let currentCard = cards.cards.find((item) => item._id === _id);
-  if (!currentCard) {
-    currentCard = wishlist.wishlistCards.find((item) => item._id === _id);
-  }
+interface IUpdateWishListCards {
+  data: {
+    FetchBasketCards: ICardFetched[];
+  };
+}
 
+const BasketItem = ({ id, title, overview, newPrice, quantity }: IProps) => {
+  const location = useLocation();
+
+  const [removeBasketItem] = useMutation(removeBasketCard, {
+    update: (cache, { data: removedCard }) => {
+      const basket = cache.readQuery<IFetchBasketCards>({
+        query: FetchBasketCards,
+      });
+      if (basket) {
+        cache.writeQuery<IFetchBasketCards, IUpdateBasket>({
+          query: FetchBasketCards,
+          data: {
+            FetchBasketCards: [
+              ...basket.FetchBasketCards.filter(
+                (item) => item.id !== removedCard.RemoveBasketItem.id
+              ),
+            ],
+          },
+        });
+      }
+    },
+  });
+
+  const [ChangeCardAmount] = useMutation(ChangeCardQuantity);
+  const [RemoveWishListCard] = useMutation(RemoveWishListItem, {
+    update(cache, { data }) {
+      const WishListBasket = cache.readQuery<IWishListCards>({
+        query: FetchWishListCards,
+      });
+      if (WishListBasket && data) {
+        cache.writeQuery<IWishListCards, IUpdateWishListCards>({
+          query: FetchWishListCards,
+          data: {
+            FetchWishListCards: [
+              ...WishListBasket.FetchWishListCards.filter(
+                (item) => item.id !== data.RemoveWishListItem.id
+              ),
+            ],
+          },
+        });
+      }
+    },
+  });
   return (
-    <div className="product-item" key={_id}>
+    <div className="product-item" key={id}>
       <img src={require("./../../images/cards/thruster.png")} alt="" />
       <div className="product-item__info">
         <span>{title}</span>
@@ -57,37 +100,31 @@ const BasketItem = ({ _id, title, overview, newPrice }: IProps) => {
             <div
               className="item-arrow__left arrow"
               onClick={() =>
-                currentCard && currentCard.quantity === 1
+                quantity === 1
                   ? null
-                  : dispatch(ChangeCardAmount(_id, -1))
+                  : ChangeCardAmount({ variables: { id, count: -1 } })
               }
             ></div>
-            <input
-              type="number"
-              disabled
-              value={currentCard && currentCard.quantity}
-            />
+            <input type="number" disabled value={quantity} />
             <div
               className="item-arrow__right arrow"
               onClick={() => {
-                dispatch(ChangeCardAmount(_id, 1));
+                ChangeCardAmount({ variables: { id, count: 1 } });
               }}
             ></div>
           </div>
         )}
       </div>
       {location.pathname !== "/wishlist" && (
-        <div className="product-item__subtotal">
-          €. {newPrice * currentCard!.quantity}
-        </div>
+        <div className="product-item__subtotal">€. {newPrice * quantity}</div>
       )}
       <div
         className="product-item__delete"
         onClick={() => {
-          {
-            location.pathname !== "/wishlist"
-              ? dispatch(removeBasketCard(_id, token))
-              : dispatch(removeWishListCard(_id, token));
+          if (location.pathname !== "/wishlist") {
+            removeBasketItem({ variables: { id } });
+          } else {
+            RemoveWishListCard({ variables: { id } });
           }
         }}
       >

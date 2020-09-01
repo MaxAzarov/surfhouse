@@ -1,4 +1,4 @@
-export const SET_USER_INFO = "GET_USER_INFO";
+export const SET_USER_INFO = "SET_USER_INFO";
 export const USER_LOGOUT = "USER_LOGOUT";
 export const OPEN_MENU = "OPEN_MENU";
 

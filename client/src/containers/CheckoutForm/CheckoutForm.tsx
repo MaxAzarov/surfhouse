@@ -1,66 +1,39 @@
 import React, { useState, ChangeEvent } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import { UserLogin } from "./../../actions/user";
 
 import "./CheckoutForm.scss";
 import BasketInfo from "../../components/BasketInfo/BasketInfo";
-import useFetch from "./../../utils/useFetch";
-import { AppState } from "../../reducers/rootReducer";
+import { UserLoginQuery } from "../../graphql/Mutation/UserLogin";
+import { CheckoutQuery } from "../../graphql/Query/Checkout";
 
-interface Register {
-  token: string;
-  id: string;
-}
-
-const CheckoutForm: React.FC<RouteComponentProps> = ({ history }) => {
+const CheckoutForm = ({ history }: RouteComponentProps) => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const dispatch = useDispatch();
-  const token = useSelector<AppState, string>((state) => state.user.token);
-
   const [checkoutEmail, setCheckoutEmail] = useState<string>();
   const [address, setAddress] = useState<string>();
   const [creditCard, setCreditCard] = useState<string>();
   const [expDate, setExpDate] = useState<string>();
   const [secureCode, setSecureCode] = useState<string>();
-  const HandleLogin = async () => {
-    const response: Register = await useFetch(
-      "/api/login",
-      "POST",
-      { email, password },
-      ""
-    );
-    if ((response.token, response.id)) {
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("id", response.id);
-      dispatch(UserLogin(response.id, response.token));
-      return history.push("/");
-    }
-  };
-
-  const stripeHandler = () => {
-    if (token) {
-      fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: token,
-        },
-        body: JSON.stringify({
-          stripeToken: {
-            number: creditCard,
-            exp_month: expDate?.split("-")[1],
-            exp_year: expDate?.split("-")[0],
-            cvc: secureCode,
-            address_line1: address,
-          },
-        }),
-      })
-        .then((response) => response.json())
-        .then((id) => {});
-    }
-  };
+  const [Login, { data }] = useMutation(UserLoginQuery);
+  if (data) {
+    localStorage.setItem("token", data.userLogin.token);
+    localStorage.setItem("id", data.userLogin.id);
+    dispatch(UserLogin(data.userLogin.id, data.userLogin.token));
+    history.push("/");
+  }
+  const [stripeHandler] = useLazyQuery(CheckoutQuery, {
+    variables: {
+      number: creditCard,
+      exp_month: expDate?.split("-")[1],
+      exp_year: expDate?.split("-")[0],
+      cvc: secureCode,
+      address_line1: address,
+    },
+  });
   return (
     <>
       <div className="checkout-user">
@@ -101,7 +74,13 @@ const CheckoutForm: React.FC<RouteComponentProps> = ({ history }) => {
             </label>
 
             <br />
-            <button onClick={HandleLogin}>Login</button>
+            <button
+              onClick={() => {
+                Login({ variables: { email, password } });
+              }}
+            >
+              Login
+            </button>
           </div>
         </div>
         <BasketInfo></BasketInfo>

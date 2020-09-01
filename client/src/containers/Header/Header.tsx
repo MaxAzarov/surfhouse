@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation, withRouter } from "react-router-dom";
 import { RouteComponentProps } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import "./Header.scss";
 import logo from "./../../images/header/logo.png";
@@ -10,13 +11,12 @@ import youtube from "./../../images/header/youtube.png";
 import pinterest from "./../../images/header/pinterest.png";
 import instagram from "./../../images/header/insta.png";
 import HeaderInfo from "./HeaderInfo";
-import { useDispatch } from "react-redux";
 import { OpenMenu } from "../../actions/user";
 
-type Props = {
+interface IProps {
   id: string;
-};
-const Header = (props: RouteComponentProps<Props>): JSX.Element => {
+}
+const Header = (props: RouteComponentProps<IProps>): JSX.Element => {
   const location = useLocation();
   const dispatch = useDispatch();
 

@@ -1,10 +1,10 @@
+import { Dispatch } from "redux";
 import {
   UserActionTypes,
   SET_USER_INFO,
   OPEN_MENU,
 } from "../types/actions/user";
 import { Actions } from "./../types/actions/rootActions";
-import { Dispatch } from "redux";
 
 export const UserLogin = (id: string, token: string): UserActionTypes => ({
   type: SET_USER_INFO,

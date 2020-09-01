@@ -1,28 +1,28 @@
-import React, { useEffect } from "react";
-import "./BasketItem.scss";
+import React from "react";
 import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useQuery } from "@apollo/client";
 
+import "./BasketItem.scss";
 import BasketInfo from "../../components/BasketInfo/BasketInfo";
-import { AppState } from "../../reducers/rootReducer";
 import BasketItem from "./BasketItem";
-import { FetchBasketCards } from "../../actions/basket";
-import { IBasket } from "./../../../../interfaces/basket";
+import Spinner from "../../components/Spinner/Spinner";
+import { FetchBasketCards } from "../../graphql/Query/FetchBasketCards";
+import { IFetchBasketCards } from "../../../../interfaces/basket";
 
 const BasketItems = () => {
-  const token = useSelector<AppState, string>((state) => state.user.token);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(FetchBasketCards(token));
-  }, [token, dispatch]);
-  const basket: IBasket = useSelector<AppState, any>((state) => state.basket);
+  const { loading, error, data } = useQuery<IFetchBasketCards>(
+    FetchBasketCards
+  );
+  if (error) {
+    return <div>Something went wrong</div>;
+  }
+  if (loading || !data) {
+    return <Spinner></Spinner>;
+  }
   return (
     <div className="cart-main__products">
       <div className="cart-products__leftbar">
-        {basket.cards.length === 0 ? (
-          ""
-        ) : (
+        {data.FetchBasketCards.length !== 0 && (
           <div className="leftbar-products__titles">
             <ul>
               <li>Products name</li>
@@ -33,23 +33,27 @@ const BasketItems = () => {
           </div>
         )}
         <div className="leftbar-products__items">
-          {basket.cards?.map((item) => {
-            if (item && item.id) {
-              const { quantity, _id } = item;
-              const { image, title, overview, newPrice } = item.id;
-              return (
-                <BasketItem
-                  _id={_id}
-                  title={title}
-                  overview={overview}
-                  newPrice={newPrice}
-                  quantity={quantity}
-                  image={image}
-                ></BasketItem>
-              );
-            }
-          })}
-          {basket.cards.length === 0 && (
+          {data &&
+            data.FetchBasketCards.map((item) => {
+              if (item && item.elementId) {
+                const { quantity, id } = item;
+                const { image, title, overview, newPrice } = item.elementId;
+                return (
+                  <BasketItem
+                    key={id}
+                    id={id}
+                    title={title}
+                    overview={overview}
+                    newPrice={newPrice}
+                    quantity={quantity}
+                    image={image}
+                  ></BasketItem>
+                );
+              } else {
+                return <div></div>;
+              }
+            })}
+          {data.FetchBasketCards.length === 0 && (
             <p style={{ fontStyle: "italic" }}>Your basket is empty!</p>
           )}
           <div className="leftbar-products__coupon">
@@ -68,4 +72,4 @@ const BasketItems = () => {
     </div>
   );
 };
-export default React.memo(BasketItems);
+export default BasketItems;
